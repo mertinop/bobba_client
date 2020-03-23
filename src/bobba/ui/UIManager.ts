@@ -273,10 +273,10 @@ export default class UIManager {
         }
     }
 
-    doRequestCataloguePurchase(pageId: number, itemId: number) {
+    doRequestCataloguePurchase(pageId: number, itemId: number, amount: number) {
         const { currentUser } = this.game.userManager;
         if (currentUser != null) {
-            this.game.catalogue.requestPurchase(pageId, itemId);
+            this.game.catalogue.requestPurchase(pageId, itemId, amount);
         }
     }
 

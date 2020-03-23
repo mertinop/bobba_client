@@ -47,7 +47,7 @@ export default class Catalogue {
         }
     }
 
-    requestPurchase(pageId: number, itemId: number) {
-        BobbaEnvironment.getGame().communicationManager.sendMessage(new RequestCataloguePurchase(pageId, itemId));
+    requestPurchase(pageId: number, itemId: number, amount: number) {
+        BobbaEnvironment.getGame().communicationManager.sendMessage(new RequestCataloguePurchase(pageId, itemId, amount));
     }
 }

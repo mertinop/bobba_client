@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import Draggable from "react-draggable";
 import './confirmpurchase.css';
 import CatalogueItem from "../../bobba/catalogue/CatalogueItem";
@@ -7,14 +7,16 @@ import { canvas2Image } from "../misc/GraphicsUtilities";
 type ConfirmPurchaseProps = {
     item: CatalogueItem,
     onClose: () => void,
-    onPurchase: () => void,
+    onPurchase: (amount: number) => void,
     zIndex: number,
 };
 type ConfirmPurchaseState = {
     visible: boolean,
+    amount: number
 };
 const initialState: ConfirmPurchaseState = {
     visible: true,
+    amount: 1
 };
 
 export default class ConfirmPurchase extends React.Component<ConfirmPurchaseProps, ConfirmPurchaseState> {
@@ -23,9 +25,21 @@ export default class ConfirmPurchase extends React.Component<ConfirmPurchaseProp
         super(props);
         this.state = initialState;
     }
+    handleInputChange = (event: SyntheticEvent) => {
+        const target = event.target as HTMLInputElement;
+        const value = target.value;
+        this.setState({
+            ...this.state,
+            amount: parseInt(value),
+        });
+    }
+    handlePurchase = () => {
+        const { onPurchase } = this.props
+        onPurchase(this.state.amount)
+    }
 
     render() {
-        const { item, onClose, onPurchase, zIndex } = this.props;
+        const { item, onClose, zIndex } = this.props;
         if (item.baseItem == null) {
             return <></>;
         }
@@ -46,6 +60,7 @@ export default class ConfirmPurchase extends React.Component<ConfirmPurchaseProp
                             <h2>
                                 {item.baseItem.furniBase.itemData.name}
                             </h2>
+                            <input type="number" onChange={this.handleInputChange} value={this.state.amount} />
                         </div>
                         <div className="second_row">
                             <p>
@@ -56,7 +71,7 @@ export default class ConfirmPurchase extends React.Component<ConfirmPurchaseProp
                             </p>
                         </div>
                         <div className="third_row">
-                            <button onClick={onPurchase}>Comprar</button>
+                            <button onClick={this.handlePurchase}>Comprar</button>
                             <button>Regalar</button>
                             <button onClick={onClose}>Cancelar</button>
                         </div>

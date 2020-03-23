@@ -196,9 +196,9 @@ export default class Catalogue extends React.Component<CatalogueProps, Catalogue
         });
     }
 
-    handlePurchase = () => {
+    handlePurchase = (amount: number) => {
         const { currentItemId, currentPageId } = this.state;
-        BobbaEnvironment.getGame().uiManager.doRequestCataloguePurchase(currentPageId, currentItemId);
+        BobbaEnvironment.getGame().uiManager.doRequestCataloguePurchase(currentPageId, currentItemId, amount);
         this.setState({
             purchaseWindowVisible: false,
         });

@@ -77,6 +77,12 @@
     margin: auto;
 }
 
+.catalogue_confirm_purchase .first_row input {
+    width: 20px;
+    height: 20px;
+
+}
+
 .catalogue_confirm_purchase .second_row {
     height: 30%;
 }
