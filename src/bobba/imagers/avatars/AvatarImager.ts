@@ -1,6 +1,7 @@
 import AvatarInfo, { Direction, FigurePart } from "./AvatarInfo";
 import AvatarChunk from "./AvatarChunk";
 import Constants from "../../../Constants";
+import { Dance1animation } from "./animation";
 
 export const LOCAL_RESOURCES_URL = Constants.AVATAR_RESOURCES_URL;
 
@@ -141,6 +142,7 @@ export default class AvatarImager {
 
         const chunks: AvatarChunk[] = [];
         const offsetsPromises: Promise<void>[] = [];
+        const dance = true
 
         for (let type of drawParts) {
             const drawableParts = setParts[type];
@@ -148,7 +150,7 @@ export default class AvatarImager {
                 for (let drawablePart of drawableParts) {
                     const uniqueName = this.getPartUniqueName(type, drawablePart["id"]);
                     if (uniqueName != null) {
-                        //console.log(type + " -> " + drawablePart["id"] + " -> " + uniqueName);
+                        console.log(type + " -> " + drawablePart["id"] + " -> " + uniqueName);
 
                         if (setParts["hidden"].includes(type)) {
                             continue;
@@ -214,9 +216,18 @@ export default class AvatarImager {
                             this.offsets[uniqueName] = { 'promise': this.fetchOffsetAsync(uniqueName), 'data': {} };
                         }
                         offsetsPromises.push(this.offsets[uniqueName].promise);
-
+                        
+                        
                         const color = drawablePart.colorable ? drawablePart.color : null;
-                        const drawPartChunk = this.getPartResource(uniqueName, drawAction, type, avatarInfo.isSmall, drawablePart["id"], drawDirection, avatarInfo.frame, color);
+                        //const leftarm = ["lh", "lhs", "ls", "lc"]
+                        const leftarm = ["a"]
+                        let drawPartChunk: AvatarChunk
+                        if (leftarm.includes(type)){
+                            drawPartChunk = this.getPartResource(uniqueName, Dance1animation[avatarInfo.frame]._action, type, avatarInfo.isSmall, drawablePart["id"], drawDirection, avatarInfo.frame, color);
+                        } else {
+                            console.log('drawAction', drawAction, 'type', type, 'drawablePart', drawablePart.id, 'frame', avatarInfo.frame)
+                            drawPartChunk = this.getPartResource(uniqueName, drawAction, type, avatarInfo.isSmall, drawablePart["id"], drawDirection, avatarInfo.frame, color);
+                        }
                         chunks.push(drawPartChunk);
                     }
                 }
@@ -302,6 +313,16 @@ export default class AvatarImager {
                     //console.log("drawing...");
 
                     for (let chunk of chunks) {
+                        console.log(
+                          "offsets",
+                          this.offsets,
+                          "chunk.lib",
+                          chunk.lib,
+                          "this.offsets[chunk.lib].data[chunk.getResourceName()]",
+                          this.offsets[chunk.lib].data[chunk.getResourceName()],
+                          "chunk.getResourceName()",
+                          chunk.getResourceName()
+                        );
                         if (this.offsets[chunk.lib].data != null && this.offsets[chunk.lib].data[chunk.getResourceName()] != null) {
                             //console.log(chunk);
                             if (chunk.resource != null) {
@@ -337,6 +358,7 @@ export default class AvatarImager {
     }
 
     getActivePartSet(partSet: string): any {
+        console.log(this.partsets)
         const activeParts = this.partsets['activePartSet'][partSet]['activePart'];
         if (activeParts == null || activeParts.length === 0) {
             return null;

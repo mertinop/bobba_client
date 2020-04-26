@@ -7,6 +7,7 @@ import RequestLookAt from "../../communication/outgoing/rooms/RequestLookAt";
 import { ROOM_TILE_SHADOW } from "../../graphics/GenericSprites";
 import { Selectable } from "../RoomEngine";
 import User from "../../users/User";
+import { Dance1animation } from '../../imagers/avatars/animation';
 
 const FRAME_SPEED = 100;
 const WALK_SPEED = 2; //Squares per second
@@ -33,6 +34,8 @@ export default class RoomUser implements Selectable {
     _waveCounter: number;
     _speakCounter: number;
     _signCounter: number;
+    _danceType: -1 | 1 | 2 | 3 | 4;
+    _danceFrame: number;
 
     avatarContainer: AvatarContainer;
     container: Container;
@@ -70,6 +73,8 @@ export default class RoomUser implements Selectable {
         this._waveCounter = 0;
         this._speakCounter = 0;
         this._signCounter = 0;
+        this._danceType = 1;
+        this._danceFrame = 0;
 
         this.colorId = Math.floor(Math.random() * (16777215 - 1)) + 1;
 
@@ -131,6 +136,10 @@ export default class RoomUser implements Selectable {
         if (this.isWalking()) {
             this.move(delta);
         }
+        if (this.isDancing()) {
+            this._danceFrame = ++this._danceFrame % Dance1animation.length
+            console.log('danceFrame', this._danceFrame)
+        }
     }
 
     handleClick = (id: number) => {
@@ -161,6 +170,10 @@ export default class RoomUser implements Selectable {
 
     showSign(seconds: number) {
         this._signCounter = seconds * 1000;
+    }
+
+    dance(type: -1 | 1 | 2 | 3 | 4) {
+        this._danceType = type
     }
 
     updateStatus(x: number, y: number, z: number, rot: Direction, status: StatusContainer) {
@@ -199,6 +212,10 @@ export default class RoomUser implements Selectable {
 
     isWaving() {
         return this._waveCounter > 0;
+    }
+
+    isDancing() {
+        return this._danceType !== -1;
     }
 
     isSpeaking() {
@@ -249,6 +266,10 @@ export default class RoomUser implements Selectable {
             if (this.isWaving()) {
                 action = ["wlk", "wav"];
             }
+        }
+        if(this.isDancing()) {
+            action = [Dance1animation[this._danceFrame]._action]
+            bodyFrame = Dance1animation[this._danceFrame]._frame
         }
 
         this.signSprite.visible = this.isShowingSign();

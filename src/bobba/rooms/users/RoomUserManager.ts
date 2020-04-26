@@ -44,6 +44,7 @@ export default class RoomUserManager {
         const user = this.getUser(id);
         if (user != null) {
             user.wave(2);
+            this.addUserToRoom(-1, 10, 10, 10, 2, "Bot", "hd-190-10.lg-3023-1408.ch-215-91.hr-893-45", "Chilling")
         }
     }
 
